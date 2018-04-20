@@ -12,14 +12,14 @@ namespace Selenium.Pages
 {
     public class AdminPage
     {
-        public IWebDriver driver;        
+        public IWebDriver driver;
 
         public AdminPage(IWebDriver driver)
         {
             this.driver = driver;
             PageFactory.InitElements(driver, this);
         }
-        
+
         [FindsBy(How = How.CssSelector, Using = "#box-login > form > div.content > div:nth-child(2) > div > input")]
         public IWebElement login { get; set; }
 
@@ -29,6 +29,53 @@ namespace Selenium.Pages
         [FindsBy(How = How.CssSelector, Using = "#box-login > form > div.footer > button")]
         public IWebElement loginButton { get; set; }
 
+        [FindsBy(How = How.LinkText, Using = "Add New Product")]
+        public IWebElement addNewProductButton { get; set; }
+
+        [FindsBy(How = How.LinkText, Using = "General")]
+        public IWebElement tabGeneral { get; set; }
+
+        [FindsBy(How = How.LinkText, Using = "Information")]
+        public IWebElement tabInformation { get; set; }
+
+        [FindsBy(How = How.LinkText, Using = "Prices")]
+        public IWebElement tabPrices { get; set; }
+
+        [FindsBy(How = How.LinkText, Using = "Stock")]
+        public IWebElement tabStock { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = "#tab-general > div > div:nth-child(2) > div:nth-child(1) > div > input")]
+        public IWebElement productName { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = "#tab-information > div:nth-child(1) > div > input")]
+        public IWebElement productShortDescription { get; set; }
+
+        //[FindsBy(How = How.CssSelector, Using = "#tab-information > div:nth-child(2) > div > div > div.trumbowyg-editor.trumbowyg-autogrow-on-enter.autogrow-on-enter")]
+        //public IWebElement productDescription { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = "#prices > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > input")]
+        public IWebElement priceUSD { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = "#main > form > p > button:nth-child(1)")]
+        public IWebElement saveButton { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = "#main > form > p > button:nth-child(3)")]
+        public IWebElement deleteButton { get; set; }
+
+        //[FindsBy(How = How.CssSelector, Using = "#images > div.new-images > div > div.input-group > input")]
+        //public IWebElement imagePath { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = "#tab-general > div > div:nth-child(1) > div:nth-child(1) > div > div > label:nth-child(1)")]
+        public IWebElement statusEnabled { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = "#table-stock > tbody > tr > td:nth-child(5) > input")]
+        public IWebElement stockQty { get; set; }
+
+        public IWebElement GetProductInGrid(string name)
+        {
+            return driver.FindElement(By.LinkText(name));             
+        }
+
         public void Login(string login, string password)
         {
             this.login.SendKeys(login);
@@ -36,7 +83,7 @@ namespace Selenium.Pages
             loginButton.Click();
         }
 
-        public void ClickOnMenus()
+        public bool ClickOnMenus()
         {
             var menuContainer = new WebDriverWait(driver, TimeSpan.FromSeconds(10)).Until(ExpectedConditions.ElementExists((By.CssSelector("#box-apps-menu"))));
             IList<IWebElement> menuLinks = menuContainer.FindElements(By.CssSelector("#app- > a"));
@@ -57,10 +104,19 @@ namespace Selenium.Pages
                     IWebElement innerMenuItemLink = driver.FindElement(By.LinkText(innerMenu[j].Text));
                     innerMenuItemLink.Click();
 
-                    Assert.IsTrue(IsElementPresent(By.TagName("h1")));
+                    if (!IsElementPresent(By.TagName("h1"))) return false;
                 }
-                Assert.IsTrue(IsElementPresent(By.TagName("h1")));
+                if (!IsElementPresent(By.TagName("h1"))) return false;
             }
+            return true;
+        }
+
+        public void OpenMenuByName(string menuName)
+        {
+            var menuContainer = new WebDriverWait(driver, TimeSpan.FromSeconds(10)).Until(ExpectedConditions.ElementExists((By.CssSelector("#box-apps-menu"))));
+            IList<IWebElement> menuLinks = menuContainer.FindElements(By.CssSelector("#app- > a"));
+            IWebElement menuItemLink = driver.FindElement(By.LinkText(menuName));
+            menuItemLink.Click();
         }
 
         private bool IsElementPresent(By by)

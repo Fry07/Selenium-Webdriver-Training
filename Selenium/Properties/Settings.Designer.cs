@@ -70,5 +70,17 @@ namespace Selenium.Properties {
                 this["AdminPassword"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://159.89.100.130/litecart/en/rubber-ducks-c-1/blue-duck-p-4")]
+        public string BlueDuckURL {
+            get {
+                return ((string)(this["BlueDuckURL"]));
+            }
+            set {
+                this["BlueDuckURL"] = value;
+            }
+        }
     }
 }

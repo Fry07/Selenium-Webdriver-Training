@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Selenium.Pages;
+using System.IO;
 
 namespace Selenium
 {
@@ -46,46 +47,28 @@ namespace Selenium
             driver.Navigate().GoToUrl(Properties.Settings.Default.AdminPageURL);
             AdminPage adminPage = new AdminPage(driver);
             adminPage.Login(Properties.Settings.Default.AdminLogin, Properties.Settings.Default.AdminPassword);
-            adminPage.OpenMenuByName("Catalog");
-            adminPage.addNewProductButton.Click();
-            adminPage.tabGeneral.Click();
-            adminPage.productName.SendKeys(name);
-            //adminPage.imagePath.SendKeys("asd");
-            adminPage.statusEnabled.Click();
-            adminPage.tabInformation.Click();
-            adminPage.productShortDescription.SendKeys(Faker.Company.CatchPhrase());
-            //adminPage.productDescription.SendKeys(Faker.Company.CatchPhrase());
-            adminPage.tabPrices.Click();
-            adminPage.priceUSD.SendKeys(Faker.RandomNumber.Next(10000).ToString());
-            adminPage.tabStock.Click();
-            adminPage.stockQty.SendKeys(Faker.RandomNumber.Next(1000).ToString());
-            adminPage.saveButton.Click();
+            adminPage.AddNewProduct(name);
+            Assert.IsTrue(adminPage.IsElementPresent(By.LinkText(name)));
 
             driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
             MainPage mainPage = new MainPage(driver);
-            mainPage.search.SendKeys(name);
-            mainPage.search.SendKeys(Keys.Enter);
-            mainPage.addToCart.Click();
+            mainPage.SearchAndOpenProduct(name);
+            mainPage.addToCart.Click();            
             Thread.Sleep(600);
             driver.Navigate().GoToUrl(Properties.Settings.Default.BlueDuckURL);
             mainPage.addToCart.Click();
             Thread.Sleep(600);
             Assert.AreEqual(2, Convert.ToInt32(mainPage.cartQty.Text));
-            mainPage.cart.Click();
-            Thread.Sleep(1500);
-            mainPage.removeButton.Click();
-            Thread.Sleep(1500);
-            mainPage.removeButton.Click();
-            Thread.Sleep(1500);
+
+            mainPage.RemoveTopProductsFromCart(2);
+            Assert.AreEqual("There are no items in your cart.", mainPage.emptyCartMsg.Text);
 
             driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
             Assert.AreEqual(0, Convert.ToInt32(mainPage.cartQty.Text));
+
             driver.Navigate().GoToUrl(Properties.Settings.Default.AdminPageURL);
-            adminPage.OpenMenuByName("Catalog");
-            adminPage.GetProductInGrid(name).Click();
-            adminPage.deleteButton.Click();
-            IAlert alert = driver.SwitchTo().Alert();
-            alert.Accept();
+            adminPage.DeleteProduct(name);
+            Assert.IsFalse(adminPage.IsElementPresent(By.LinkText(name)));            
         }
     }
 }

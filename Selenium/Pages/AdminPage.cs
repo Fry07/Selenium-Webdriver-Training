@@ -4,6 +4,7 @@ using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,8 +51,8 @@ namespace Selenium.Pages
         [FindsBy(How = How.CssSelector, Using = "#tab-information > div:nth-child(1) > div > input")]
         public IWebElement productShortDescription { get; set; }
 
-        //[FindsBy(How = How.CssSelector, Using = "#tab-information > div:nth-child(2) > div > div > div.trumbowyg-editor.trumbowyg-autogrow-on-enter.autogrow-on-enter")]
-        //public IWebElement productDescription { get; set; }
+        [FindsBy(How = How.XPath, Using = "/html/body/div[2]/main/form/div/div[2]/div[2]/div/div/textarea")]
+        public IWebElement productDescription { get; set; }
 
         [FindsBy(How = How.CssSelector, Using = "#prices > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > input")]
         public IWebElement priceUSD { get; set; }
@@ -62,14 +63,16 @@ namespace Selenium.Pages
         [FindsBy(How = How.CssSelector, Using = "#main > form > p > button:nth-child(3)")]
         public IWebElement deleteButton { get; set; }
 
-        //[FindsBy(How = How.CssSelector, Using = "#images > div.new-images > div > div.input-group > input")]
-        //public IWebElement imagePath { get; set; }
+        [FindsBy(How = How.CssSelector, Using = "#images > div.new-images > div > div.input-group > input")]
+        public IWebElement imagePath { get; set; }
 
         [FindsBy(How = How.CssSelector, Using = "#tab-general > div > div:nth-child(1) > div:nth-child(1) > div > div > label:nth-child(1)")]
         public IWebElement statusEnabled { get; set; }
 
         [FindsBy(How = How.CssSelector, Using = "#table-stock > tbody > tr > td:nth-child(5) > input")]
         public IWebElement stockQty { get; set; }
+
+      
 
         public IWebElement GetProductInGrid(string name)
         {
@@ -81,6 +84,33 @@ namespace Selenium.Pages
             this.login.SendKeys(login);
             this.password.SendKeys(password);
             loginButton.Click();
+        }
+
+        public void AddNewProduct(string name)
+        {
+            OpenMenuByName("Catalog");
+            addNewProductButton.Click();
+            tabGeneral.Click();
+            productName.SendKeys(name);
+            imagePath.SendKeys(Path.GetFullPath(@"Selenium\Files\duck_hunt.jpg"));
+            statusEnabled.Click();
+            tabInformation.Click();
+            productShortDescription.SendKeys(Faker.Company.CatchPhrase());
+            productDescription.SendKeys(Faker.Company.CatchPhrase());
+            tabPrices.Click();
+            priceUSD.SendKeys(Faker.RandomNumber.Next(10000).ToString());
+            tabStock.Click();
+            stockQty.SendKeys(Faker.RandomNumber.Next(1000).ToString());
+            saveButton.Click();
+        }
+
+        public void DeleteProduct(string name)
+        {
+            OpenMenuByName("Catalog");
+            GetProductInGrid(name).Click();
+            deleteButton.Click();
+            IAlert alert = driver.SwitchTo().Alert();
+            alert.Accept();
         }
 
         public bool ClickOnMenus()
@@ -119,7 +149,7 @@ namespace Selenium.Pages
             menuItemLink.Click();
         }
 
-        private bool IsElementPresent(By by)
+        public bool IsElementPresent(By by)
         {
             try
             {

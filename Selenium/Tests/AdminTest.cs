@@ -59,16 +59,16 @@ namespace Selenium
             mainPage.OpenMainPage();
             mainPage.SearchAndOpenProduct(name);
             mainPage.AddProductToTheCart("1");
-            Assert.AreEqual(1, Convert.ToInt32(mainPage.cartQty.Text));
+            Assert.AreEqual(1, mainPage.GetCartQuantity());
             mainPage.OpenBlueDuckPage();
             mainPage.AddProductToTheCart("2");
-            Assert.AreEqual(2, Convert.ToInt32(mainPage.cartQty.Text));
+            Assert.AreEqual(2, mainPage.GetCartQuantity());
 
             mainPage.RemoveTopProductsFromCart(2);
-            Assert.AreEqual("There are no items in your cart.", mainPage.emptyCartMsg.Text);
+            Assert.AreEqual("There are no items in your cart.", mainPage.GetEmptyCartMessage());
 
             mainPage.OpenMainPage();
-            Assert.AreEqual(0, Convert.ToInt32(mainPage.cartQty.Text));
+            Assert.AreEqual(0, mainPage.GetCartQuantity());
 
             adminPage.OpenAdminPage();
             adminPage.DeleteProduct(name);

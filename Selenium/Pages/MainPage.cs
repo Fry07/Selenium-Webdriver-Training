@@ -68,5 +68,15 @@ namespace Selenium.Pages
         {
             driver.Navigate().GoToUrl(Properties.Settings.Default.BlueDuckURL);
         }
+
+        public int GetCartQuantity()
+        {
+            return Convert.ToInt32(cartQty.Text);
+        }
+
+        public string GetEmptyCartMessage()
+        {
+            return emptyCartMsg.Text;
+        }
     }
 }

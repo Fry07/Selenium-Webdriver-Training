@@ -53,12 +53,11 @@ namespace Selenium
             driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
             MainPage mainPage = new MainPage(driver);
             mainPage.SearchAndOpenProduct(name);
-            mainPage.addToCart.Click();            
-            Thread.Sleep(600);
+            mainPage.addToCart.Click();
+            wait.Until(ExpectedConditions.TextToBePresentInElement(mainPage.cartQty, "1"));
             driver.Navigate().GoToUrl(Properties.Settings.Default.BlueDuckURL);
             mainPage.addToCart.Click();
-            Thread.Sleep(600);
-            Assert.AreEqual(2, Convert.ToInt32(mainPage.cartQty.Text));
+            wait.Until(ExpectedConditions.TextToBePresentInElement(mainPage.cartQty, "2"));
 
             mainPage.RemoveTopProductsFromCart(2);
             Assert.AreEqual("There are no items in your cart.", mainPage.emptyCartMsg.Text);
@@ -68,7 +67,7 @@ namespace Selenium
 
             driver.Navigate().GoToUrl(Properties.Settings.Default.AdminPageURL);
             adminPage.DeleteProduct(name);
-            Assert.IsFalse(adminPage.IsElementPresent(By.LinkText(name)));            
+            Assert.IsFalse(adminPage.IsElementPresent(By.LinkText(name)));
         }
     }
 }

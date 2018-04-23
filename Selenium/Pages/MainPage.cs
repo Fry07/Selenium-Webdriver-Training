@@ -21,7 +21,7 @@ namespace Selenium.Pages
             this.driver = driver;
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
             PageFactory.InitElements(driver, this);
-        }        
+        }
 
         [FindsBy(How = How.CssSelector, Using = "#site-menu > nav > div.navbar-header > form > div > input")]
         public IWebElement search { get; set; }
@@ -44,11 +44,12 @@ namespace Selenium.Pages
         public void RemoveTopProductsFromCart(int productsCount)
         {
             cart.Click();
-            Thread.Sleep(1500);
+            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("#box-checkout-customer > h2"))); //Customer Details header
             for (int i = 0; i < productsCount; i++)
             {
+                IWebElement shoppingCartHeader = driver.FindElement(By.CssSelector("#box-checkout-cart > h2"));
                 removeButton.Click();
-                Thread.Sleep(1500);
+                wait.Until(ExpectedConditions.StalenessOf(shoppingCartHeader));
             }
         }
 

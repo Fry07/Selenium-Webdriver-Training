@@ -72,11 +72,11 @@ namespace Selenium.Pages
         [FindsBy(How = How.CssSelector, Using = "#table-stock > tbody > tr > td:nth-child(5) > input")]
         public IWebElement stockQty { get; set; }
 
-      
+
 
         public IWebElement GetProductInGrid(string name)
         {
-            return driver.FindElement(By.LinkText(name));             
+            return driver.FindElement(By.LinkText(name));
         }
 
         public void Login(string login, string password)
@@ -92,7 +92,7 @@ namespace Selenium.Pages
             addNewProductButton.Click();
             tabGeneral.Click();
             productName.SendKeys(name);
-            imagePath.SendKeys(Path.GetFullPath(@"Selenium\Files\duck_hunt.jpg"));
+            imagePath.SendKeys(Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\Files\\duck_hunt.jpg")));
             statusEnabled.Click();
             tabInformation.Click();
             productShortDescription.SendKeys(Faker.Company.CatchPhrase());
@@ -160,6 +160,6 @@ namespace Selenium.Pages
             {
                 return false;
             }
-        }  
+        }
     }
 }

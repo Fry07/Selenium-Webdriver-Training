@@ -4,6 +4,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
+using Selenium.Pages;
 using System;
 
 namespace Selenium
@@ -24,8 +25,8 @@ namespace Selenium
         public void ChromeOpen()
         {
             driver = new ChromeDriver();
-            driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
-
+            MainPage mainPage = new MainPage(driver);
+            mainPage.OpenMainPage();
             String actualTitle = driver.Title;
             Assert.AreEqual(expectedTitle, actualTitle);
         }
@@ -34,8 +35,8 @@ namespace Selenium
         public void FirefoxOpen()
         {
             driver = new FirefoxDriver();
-            driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
-
+            MainPage mainPage = new MainPage(driver);
+            mainPage.OpenMainPage();
             String actualTitle = driver.Title;
             Assert.AreEqual(expectedTitle, actualTitle);
         }
@@ -44,8 +45,8 @@ namespace Selenium
         public void ExplorerOpen()
         {
             driver = new InternetExplorerDriver();
-            driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
-
+            MainPage mainPage = new MainPage(driver);
+            mainPage.OpenMainPage();
             String actualTitle = driver.Title;
             Assert.AreEqual(expectedTitle, actualTitle);
         }

@@ -72,6 +72,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="WebDriverEvents.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

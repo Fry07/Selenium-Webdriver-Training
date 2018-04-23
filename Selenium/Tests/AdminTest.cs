@@ -3,12 +3,9 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Selenium.Pages;
 using System.IO;
+using OpenQA.Selenium.Support.Events;
 
 namespace Selenium
 {
@@ -17,25 +14,32 @@ namespace Selenium
     {
         public IWebDriver driver { get; set; }
         public WebDriverWait wait { get; set; }
+        public static string logPath;
 
         [SetUp]
         public void SetUp()
         {
-            driver = new ChromeDriver();
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
+            driver = new ChromeDriver();            
+            logPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\Logs\\")) + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".txt";
+
+            EventFiringWebDriver firingDriver = new EventFiringWebDriver(driver);
+            firingDriver.ExceptionThrown += new EventHandler<WebDriverExceptionEventArgs>(WebDriverEvents.firingDriver_ExceptionThrown);
+            firingDriver.ElementClicked += new EventHandler<WebElementEventArgs>(WebDriverEvents.firingDriver_ElementClicked);
+            firingDriver.FindElementCompleted += new EventHandler<FindElementEventArgs>(WebDriverEvents.firingDriver_FindElementCompleted);
+            driver = firingDriver;
         }
 
         [TearDown]
         public void TearDown()
         {
-            driver.Quit();
+            if (driver != null) driver.Quit();
         }
 
         [Test, Category("AdminPage"), Description("Login to admin panel. Sequentially click on each item in side menu (left) including all submenu items. For each new page verify if header is present on the page (element h1).")]
         public void OpenAllSubmenus()
         {
-            driver.Navigate().GoToUrl(Properties.Settings.Default.AdminPageURL);
             AdminPage adminPage = new AdminPage(driver);
+            adminPage.OpenAdminPage();
             adminPage.Login(Properties.Settings.Default.AdminLogin, Properties.Settings.Default.AdminPassword);
             Assert.IsTrue(adminPage.ClickOnMenus());
         }
@@ -43,29 +47,30 @@ namespace Selenium
         [Test, Description("Add and edit products to cart including new product that was added from admin page.")]
         public void EditCartWithNewProduct()
         {
-            var name = Faker.Company.Name();
-            driver.Navigate().GoToUrl(Properties.Settings.Default.AdminPageURL);
+            var name = Faker.Company.Name();            
             AdminPage adminPage = new AdminPage(driver);
+            MainPage mainPage = new MainPage(driver);
+
+            adminPage.OpenAdminPage();
             adminPage.Login(Properties.Settings.Default.AdminLogin, Properties.Settings.Default.AdminPassword);
             adminPage.AddNewProduct(name);
-            Assert.IsTrue(adminPage.IsElementPresent(By.LinkText(name)));
-
-            driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
-            MainPage mainPage = new MainPage(driver);
+            Assert.IsTrue(adminPage.IsElementPresent(By.LinkText(name)));                    
+            
+            mainPage.OpenMainPage();
             mainPage.SearchAndOpenProduct(name);
-            mainPage.addToCart.Click();
-            wait.Until(ExpectedConditions.TextToBePresentInElement(mainPage.cartQty, "1"));
-            driver.Navigate().GoToUrl(Properties.Settings.Default.BlueDuckURL);
-            mainPage.addToCart.Click();
-            wait.Until(ExpectedConditions.TextToBePresentInElement(mainPage.cartQty, "2"));
+            mainPage.AddProductToTheCart("1");
+            Assert.AreEqual(1, Convert.ToInt32(mainPage.cartQty.Text));
+            mainPage.OpenBlueDuckPage();
+            mainPage.AddProductToTheCart("2");
+            Assert.AreEqual(2, Convert.ToInt32(mainPage.cartQty.Text));
 
             mainPage.RemoveTopProductsFromCart(2);
             Assert.AreEqual("There are no items in your cart.", mainPage.emptyCartMsg.Text);
 
-            driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
+            mainPage.OpenMainPage();
             Assert.AreEqual(0, Convert.ToInt32(mainPage.cartQty.Text));
 
-            driver.Navigate().GoToUrl(Properties.Settings.Default.AdminPageURL);
+            adminPage.OpenAdminPage();
             adminPage.DeleteProduct(name);
             Assert.IsFalse(adminPage.IsElementPresent(By.LinkText(name)));
         }

@@ -1,13 +1,9 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Selenium.Pages
 {
@@ -84,6 +80,11 @@ namespace Selenium.Pages
             this.login.SendKeys(login);
             this.password.SendKeys(password);
             loginButton.Click();
+        }
+
+        public void OpenAdminPage()
+        {
+            driver.Navigate().GoToUrl(Properties.Settings.Default.AdminPageURL);
         }
 
         public void AddNewProduct(string name)

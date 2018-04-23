@@ -1,13 +1,7 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Selenium.Pages
 {
@@ -57,6 +51,22 @@ namespace Selenium.Pages
         {
             search.SendKeys(productName);
             search.SendKeys(Keys.Enter);
+        }
+
+        public void AddProductToTheCart(string expectedQuantity)
+        {
+            addToCart.Click();
+            wait.Until(ExpectedConditions.TextToBePresentInElement(cartQty, expectedQuantity));
+        }
+
+        public void OpenMainPage()
+        {
+            driver.Navigate().GoToUrl(Properties.Settings.Default.MainPageURL);
+        }
+
+        public void OpenBlueDuckPage()
+        {
+            driver.Navigate().GoToUrl(Properties.Settings.Default.BlueDuckURL);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Selenium
             AdminPage adminPage = new AdminPage(driver);
             adminPage.OpenAdminPage();
             adminPage.Login(Properties.Settings.Default.AdminLogin, Properties.Settings.Default.AdminPassword);
-            Assert.IsTrue(adminPage.ClickOnMenus());
+            Assert.IsTrue(adminPage.ClickOnMenus(), "Header wasn't found");
         }
 
         [Test, Description("Add and edit products to cart including new product that was added from admin page.")]
@@ -54,25 +54,25 @@ namespace Selenium
             adminPage.OpenAdminPage();
             adminPage.Login(Properties.Settings.Default.AdminLogin, Properties.Settings.Default.AdminPassword);
             adminPage.AddNewProduct(name);
-            Assert.IsTrue(adminPage.IsElementPresent(By.LinkText(name)));                    
+            Assert.IsTrue(adminPage.IsElementPresent(By.LinkText(name)), "New product wasn't found in the main grid");                    
             
             mainPage.OpenMainPage();
             mainPage.SearchAndOpenProduct(name);
             mainPage.AddProductToTheCart("1");
-            Assert.AreEqual(1, mainPage.GetCartQuantity());
+            Assert.AreEqual(1, mainPage.GetCartQuantity(), "Wrong product count in the cart after adding first product");
             mainPage.OpenBlueDuckPage();
             mainPage.AddProductToTheCart("2");
-            Assert.AreEqual(2, mainPage.GetCartQuantity());
+            Assert.AreEqual(2, mainPage.GetCartQuantity(), "Wrong product count in the cart after adding second product");
 
             mainPage.RemoveTopProductsFromCart(2);
-            Assert.AreEqual("There are no items in your cart.", mainPage.GetEmptyCartMessage());
+            Assert.AreEqual("There are no items in your cart.", mainPage.GetEmptyCartMessage(), "Wrong text of empty cart message");
 
             mainPage.OpenMainPage();
-            Assert.AreEqual(0, mainPage.GetCartQuantity());
+            Assert.AreEqual(0, mainPage.GetCartQuantity(), "Wrong product count in the cart after deleting all products");
 
             adminPage.OpenAdminPage();
             adminPage.DeleteProduct(name);
-            Assert.IsFalse(adminPage.IsElementPresent(By.LinkText(name)));
+            Assert.IsFalse(adminPage.IsElementPresent(By.LinkText(name)), "Deleted product was found in the main grid");
         }
     }
 }

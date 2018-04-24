@@ -28,7 +28,7 @@ namespace Selenium
             MainPage mainPage = new MainPage(driver);
             mainPage.OpenMainPage();
             String actualTitle = driver.Title;
-            Assert.AreEqual(expectedTitle, actualTitle);
+            Assert.AreEqual(expectedTitle, actualTitle, "Title of webpage was different");
         }
 
         [Test, Category("MainPage")]
@@ -38,7 +38,7 @@ namespace Selenium
             MainPage mainPage = new MainPage(driver);
             mainPage.OpenMainPage();
             String actualTitle = driver.Title;
-            Assert.AreEqual(expectedTitle, actualTitle);
+            Assert.AreEqual(expectedTitle, actualTitle, "Title of webpage was different");
         }
 
         [Test, Category("MainPage")]
@@ -48,7 +48,7 @@ namespace Selenium
             MainPage mainPage = new MainPage(driver);
             mainPage.OpenMainPage();
             String actualTitle = driver.Title;
-            Assert.AreEqual(expectedTitle, actualTitle);
+            Assert.AreEqual(expectedTitle, actualTitle, "Title of webpage was different");
         }
     }
 }
